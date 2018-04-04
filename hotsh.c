@@ -8,12 +8,12 @@
 
 void shLoop(void);
 int sh_execute(char **args);
-char *sh_read_line_history(void);
 char *sh_read_line(void);
 char **sh_split_line(char *line);
 
 int main (void)
 {
+    printf("\033[37;1;5;41m SUPER HOT SHELL ACTIVATED \033[0m \n");
     shLoop();
     return EXIT_SUCCESS;
 }
@@ -50,46 +50,32 @@ char *sh_read_line(void)
 {
     while (1)
     {
-        char *line = readline("\033[31;1;5;47m HOT: \033[0m \n");
+        char *line = readline("\033[31;1;5;47m HOT: \n-> \033[0m");
         return line;
     }
 }
 
-//Split line
-#define SH_TOK_BUFSIZE 64
-#define SH_TOK_DELIM " \t\r\n\a"
+//Split line in to multiple arguments
 char **sh_split_line(char *line)
 {
-    int bufsize = SH_TOK_BUFSIZE, position = 0;
-    char **tokens = malloc(bufsize * sizeof(char*));
     char *token;
+    char **tokens = malloc(64 * sizeof(char*));
+    int position = 0;
 
     if (!tokens)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER \033[0m ");
+        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m ");
         exit(EXIT_FAILURE);
     }
-
-    token = strtok(line, SH_TOK_DELIM);
+    token = strtok(line, " ");
 
     while (token != NULL)
     {
         tokens[position] = token;
         position++;
 
-        if (position >= bufsize)
-        {
-            bufsize += SH_TOK_BUFSIZE;
-            tokens = realloc(tokens, bufsize * sizeof(char*));
-            if (!tokens)
-            {
-                fprintf(stderr, "\033[37;1;5;41m SUPER \033[0m ");
-                exit(EXIT_FAILURE);
-            }
-        }
-      token = strtok(NULL, SH_TOK_DELIM);
+        token = strtok(NULL, " ");
     }
-    tokens[position] = NULL;
     return tokens;
 }
 
@@ -103,13 +89,13 @@ int sh_launch(char **args)
     {
         if (execvp(args[0], args) == -1)
         {
-            perror("\033[37;1;5;41m SUPER \033[0m ");
+            perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
         }
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
-        perror("\033[37;1;5;41m SUPER \033[0m ");
+        perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
     }
     else
     {
@@ -146,13 +132,13 @@ int sh_cd(char **args)
 {
     if (args[1] == NULL)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER \033[0m ");
+        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m ");
     }
     else
     {
         if (chdir(args[1]) != 0)
         {
-            perror("\033[37;1;5;41m SUPER \033[0m ");
+            perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
         }
     }
     return 1;
@@ -161,9 +147,10 @@ int sh_cd(char **args)
 int sh_help(char **args)
 {
     int i;
-    printf("Super Hot Shell (shsh)\n");
+    printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.4\n");
     printf("By William Djalal\n");
-    printf("The following commands are built in:\n");
+    printf("GitHub: SoulPixelIV\n");
+    printf("The following commands are built in:\033[0m \n");
 
     for (i = 0; i < sh_num_builtins(); i++)
     {
@@ -179,20 +166,17 @@ int sh_exit(char **args)
 
 int sh_execute(char **args)
 {
-    int i;
-
     if (args[0] == NULL)
     {
         return 1;
     }
 
-    for (i = 0; i < sh_num_builtins(); i++)
+    for (int i = 0; i < sh_num_builtins(); i++)
     {
         if (strcmp(args[0], builtin_str[i]) == 0)
         {
             return (*builtin_func[i])(args);
         }
     }
-
     return sh_launch(args);
 }
