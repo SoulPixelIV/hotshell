@@ -5,6 +5,7 @@
 #include <readline/history.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <time.h>
 
 void shLoop(void);
 int sh_execute(char **args);
@@ -13,7 +14,8 @@ char **sh_split_line(char *line);
 
 int main (void)
 {
-    printf("\033[37;1;5;41m SUPER HOT SHELL ACTIVATED \033[0m \n");
+    //Start Up Message
+    printf("\033[37;1;5;41mSUPER HOT SHELL ACTIVATED\033[0m \n");
     shLoop();
     return EXIT_SUCCESS;
 }
@@ -48,9 +50,24 @@ void shLoop(void)
 //Read line
 char *sh_read_line(void)
 {
+    time_t rawtime;
+    struct tm *info;
+    char buffer[99];
+    char buffer2[99];
+
+    //Get current time
+    time (&rawtime);
+    info = localtime(&rawtime);
+
     while (1)
     {
-        char *line = readline("\033[31;1;5;47m HOT: \n-> \033[0m");
+        //Format time
+        strftime(buffer, 99, "%X", info);
+        //Get current Path
+        getcwd(buffer2, 99);
+        //Print time and path
+        printf("\033[37;1;5;41m%s\n\033[31;1;5;47mHOT %s", buffer, buffer2);
+        char *line = readline(" -> \033[0m");
         return line;
     }
 }
@@ -64,9 +81,10 @@ char **sh_split_line(char *line)
 
     if (!tokens)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m ");
+        fprintf(stderr, "\033[37;1;5;41mSUPER ERROR\033[0m ");
         exit(EXIT_FAILURE);
     }
+    //Split after a whitespace
     token = strtok(line, " ");
 
     while (token != NULL)
@@ -84,18 +102,19 @@ int sh_launch(char **args)
     pid_t pid, wpid;
     int status;
 
+    //Clone shell and start other program
     pid = fork();
     if (pid == 0)
     {
         if (execvp(args[0], args) == -1)
         {
-            perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
+            perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
         }
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
-        perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
+        perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
     }
     else
     {
@@ -108,6 +127,7 @@ int sh_launch(char **args)
     return 1;
 }
 
+//Other supported commands
 int sh_cd(char **args);
 int sh_help(char **args);
 int sh_exit(char **args);
@@ -128,6 +148,7 @@ int sh_num_builtins() {
   return sizeof(builtin_str) / sizeof(char *);
 }
 
+//Cd command
 int sh_cd(char **args)
 {
     if (args[1] == NULL)
@@ -144,10 +165,11 @@ int sh_cd(char **args)
     return 1;
 }
 
+//Help command
 int sh_help(char **args)
 {
     int i;
-    printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.4\n");
+    printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.5\n");
     printf("By William Djalal\n");
     printf("GitHub: SoulPixelIV\n");
     printf("The following commands are built in:\033[0m \n");
@@ -159,6 +181,7 @@ int sh_help(char **args)
     return 1;
 }
 
+//Exit command
 int sh_exit(char **args)
 {
     return 0;
