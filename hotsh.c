@@ -11,6 +11,8 @@ void sh_loop(void);
 int sh_execute(char **args);
 char *sh_read_line(void);
 char **sh_split_line(char *line);
+int sh_launch(char **args);
+int sh_num_builtins(void);
 
 int main(void)
 {
@@ -144,7 +146,7 @@ int (*builtin_func[]) (char **) = {
   &sh_exit
 };
 
-int sh_num_builtins() {
+int sh_num_builtins(void) {
   return sizeof(builtin_str) / sizeof(char *);
 }
 
