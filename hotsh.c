@@ -7,21 +7,21 @@
 #include <sys/wait.h>
 #include <time.h>
 
-void shLoop(void);
+void sh_loop(void);
 int sh_execute(char **args);
 char *sh_read_line(void);
 char **sh_split_line(char *line);
 
-int main (void)
+int main(void)
 {
     //Start Up Message
     printf("\033[37;1;5;41mSUPER HOT SHELL ACTIVATED\033[0m \n");
-    shLoop();
+    sh_loop();
     return EXIT_SUCCESS;
 }
 
 //Main loop
-void shLoop(void)
+void sh_loop(void)
 {
     char *line;
     char **args;
@@ -108,13 +108,13 @@ int sh_launch(char **args)
     {
         if (execvp(args[0], args) == -1)
         {
-            perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
+            perror("\033[37;1;5;41mSUPER ERROR\033[0m");
         }
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
-        perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
+        perror("\033[37;1;5;41mSUPER ERROR\033[0m");
     }
     else
     {
@@ -153,13 +153,13 @@ int sh_cd(char **args)
 {
     if (args[1] == NULL)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m ");
+        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m");
     }
     else
     {
         if (chdir(args[1]) != 0)
         {
-            perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
+            perror("\033[37;1;5;41m SUPER ERROR\033[0m");
         }
     }
     return 1;
@@ -172,7 +172,7 @@ int sh_help(char **args)
     printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.5\n");
     printf("By William Djalal\n");
     printf("GitHub: SoulPixelIV\n");
-    printf("The following commands are built in:\033[0m \n");
+    printf("The following commands are built in:\033[0m\n");
 
     for (i = 0; i < sh_num_builtins(); i++)
     {
