@@ -171,6 +171,7 @@ int sh_cd(char **args)
 //Help command
 int sh_help(char **args)
 {
+    (void)args;
     int i;
     printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.5\n");
     printf("By William Djalal\n");
@@ -187,6 +188,7 @@ int sh_help(char **args)
 //Exit command
 int sh_exit(char **args)
 {
+    (void)args;
     return 0;
 }
 
