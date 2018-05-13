@@ -14,6 +14,18 @@ char **sh_split_line(char *line);
 int sh_launch(char **args);
 int sh_num_builtins(void);
 
+char *builtin_str[] = {
+  "cd",
+  "help",
+  "exit"
+};
+
+int (*builtin_func[]) (char **) = {
+  &sh_cd,
+  &sh_help,
+  &sh_exit
+};
+
 int main(void)
 {
     //Start Up Message
@@ -133,18 +145,6 @@ int sh_launch(char **args)
 int sh_cd(char **args);
 int sh_help(char **args);
 int sh_exit(char **args);
-
-char *builtin_str[] = {
-  "cd",
-  "help",
-  "exit"
-};
-
-int (*builtin_func[]) (char **) = {
-  &sh_cd,
-  &sh_help,
-  &sh_exit
-};
 
 int sh_num_builtins(void) {
   return sizeof(builtin_str) / sizeof(char *);
