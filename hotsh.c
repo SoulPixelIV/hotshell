@@ -20,13 +20,13 @@ int sh_help(char **args);
 int sh_exit(char **args);
 
 
-char *builtin_str[] = {
+static char *builtin_str[] = {
   "cd",
   "help",
   "exit"
 };
 
-int (*builtin_func[]) (char **) = {
+static int (*builtin_func[]) (char **) = {
   &sh_cd,
   &sh_help,
   &sh_exit
