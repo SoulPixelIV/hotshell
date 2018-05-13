@@ -14,6 +14,12 @@ char **sh_split_line(char *line);
 int sh_launch(char **args);
 int sh_num_builtins(void);
 
+//Other supported commands
+int sh_cd(char **args);
+int sh_help(char **args);
+int sh_exit(char **args);
+
+
 char *builtin_str[] = {
   "cd",
   "help",
@@ -140,11 +146,6 @@ int sh_launch(char **args)
     }
     return 1;
 }
-
-//Other supported commands
-int sh_cd(char **args);
-int sh_help(char **args);
-int sh_exit(char **args);
 
 int sh_num_builtins(void) {
   return sizeof(builtin_str) / sizeof(char *);
