@@ -7,21 +7,41 @@
 #include <sys/wait.h>
 #include <time.h>
 
-void shLoop(void);
-int sh_execute(char **args);
-char *sh_read_line(void);
-char **sh_split_line(char *line);
+static void sh_loop(void);
+static int sh_execute(char **args);
+static char *sh_read_line(void);
+static char **sh_split_line(char *line);
+static int sh_launch(char **args);
+static int sh_num_builtins(void);
 
-int main (void)
+//Other supported commands
+static int sh_cd(char **args);
+static int sh_help(char **args);
+static int sh_exit(char **args);
+
+
+static char *builtin_str[] = {
+  "cd",
+  "help",
+  "exit"
+};
+
+static int (*builtin_func[]) (char **) = {
+  &sh_cd,
+  &sh_help,
+  &sh_exit
+};
+
+int main(void)
 {
     //Start Up Message
     printf("\033[37;1;5;41mSUPER HOT SHELL ACTIVATED\033[0m \n");
-    shLoop();
+    sh_loop();
     return EXIT_SUCCESS;
 }
 
 //Main loop
-void shLoop(void)
+static void sh_loop(void)
 {
     char *line;
     char **args;
@@ -48,7 +68,7 @@ void shLoop(void)
 }
 
 //Read line
-char *sh_read_line(void)
+static char *sh_read_line(void)
 {
     time_t rawtime;
     struct tm *info;
@@ -73,7 +93,7 @@ char *sh_read_line(void)
 }
 
 //Split line in to multiple arguments
-char **sh_split_line(char *line)
+static char **sh_split_line(char *line)
 {
     char *token;
     char **tokens = malloc(64 * sizeof(char*));
@@ -97,7 +117,7 @@ char **sh_split_line(char *line)
     return tokens;
 }
 
-int sh_launch(char **args)
+static int sh_launch(char **args)
 {
     pid_t pid, wpid;
     int status;
@@ -108,13 +128,13 @@ int sh_launch(char **args)
     {
         if (execvp(args[0], args) == -1)
         {
-            perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
+            perror("\033[37;1;5;41mSUPER ERROR\033[0m");
         }
         exit(EXIT_FAILURE);
     }
     else if (pid < 0)
     {
-        perror("\033[37;1;5;41mSUPER ERROR\033[0m ");
+        perror("\033[37;1;5;41mSUPER ERROR\033[0m");
     }
     else
     {
@@ -127,52 +147,36 @@ int sh_launch(char **args)
     return 1;
 }
 
-//Other supported commands
-int sh_cd(char **args);
-int sh_help(char **args);
-int sh_exit(char **args);
-
-char *builtin_str[] = {
-  "cd",
-  "help",
-  "exit"
-};
-
-int (*builtin_func[]) (char **) = {
-  &sh_cd,
-  &sh_help,
-  &sh_exit
-};
-
-int sh_num_builtins() {
+static int sh_num_builtins(void) {
   return sizeof(builtin_str) / sizeof(char *);
 }
 
 //Cd command
-int sh_cd(char **args)
+static int sh_cd(char **args)
 {
     if (args[1] == NULL)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m ");
+        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m");
     }
     else
     {
         if (chdir(args[1]) != 0)
         {
-            perror("\033[37;1;5;41m SUPER ERROR\033[0m ");
+            perror("\033[37;1;5;41m SUPER ERROR\033[0m");
         }
     }
     return 1;
 }
 
 //Help command
-int sh_help(char **args)
+static int sh_help(char **args)
 {
+    (void)args;
     int i;
     printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.5\n");
     printf("By William Djalal\n");
     printf("GitHub: SoulPixelIV\n");
-    printf("The following commands are built in:\033[0m \n");
+    printf("The following commands are built in:\033[0m\n");
 
     for (i = 0; i < sh_num_builtins(); i++)
     {
@@ -182,12 +186,13 @@ int sh_help(char **args)
 }
 
 //Exit command
-int sh_exit(char **args)
+static int sh_exit(char **args)
 {
+    (void)args;
     return 0;
 }
 
-int sh_execute(char **args)
+static int sh_execute(char **args)
 {
     if (args[0] == NULL)
     {
