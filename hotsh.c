@@ -7,17 +7,17 @@
 #include <sys/wait.h>
 #include <time.h>
 
-void sh_loop(void);
-int sh_execute(char **args);
-char *sh_read_line(void);
-char **sh_split_line(char *line);
-int sh_launch(char **args);
-int sh_num_builtins(void);
+static void sh_loop(void);
+static int sh_execute(char **args);
+static char *sh_read_line(void);
+static char **sh_split_line(char *line);
+static int sh_launch(char **args);
+static int sh_num_builtins(void);
 
 //Other supported commands
-int sh_cd(char **args);
-int sh_help(char **args);
-int sh_exit(char **args);
+static int sh_cd(char **args);
+static int sh_help(char **args);
+static int sh_exit(char **args);
 
 
 static char *builtin_str[] = {
@@ -41,7 +41,7 @@ int main(void)
 }
 
 //Main loop
-void sh_loop(void)
+static void sh_loop(void)
 {
     char *line;
     char **args;
@@ -68,7 +68,7 @@ void sh_loop(void)
 }
 
 //Read line
-char *sh_read_line(void)
+static char *sh_read_line(void)
 {
     time_t rawtime;
     struct tm *info;
@@ -93,7 +93,7 @@ char *sh_read_line(void)
 }
 
 //Split line in to multiple arguments
-char **sh_split_line(char *line)
+static char **sh_split_line(char *line)
 {
     char *token;
     char **tokens = malloc(64 * sizeof(char*));
@@ -117,7 +117,7 @@ char **sh_split_line(char *line)
     return tokens;
 }
 
-int sh_launch(char **args)
+static int sh_launch(char **args)
 {
     pid_t pid, wpid;
     int status;
@@ -147,12 +147,12 @@ int sh_launch(char **args)
     return 1;
 }
 
-int sh_num_builtins(void) {
+static int sh_num_builtins(void) {
   return sizeof(builtin_str) / sizeof(char *);
 }
 
 //Cd command
-int sh_cd(char **args)
+static int sh_cd(char **args)
 {
     if (args[1] == NULL)
     {
@@ -169,7 +169,7 @@ int sh_cd(char **args)
 }
 
 //Help command
-int sh_help(char **args)
+static int sh_help(char **args)
 {
     (void)args;
     int i;
@@ -186,13 +186,13 @@ int sh_help(char **args)
 }
 
 //Exit command
-int sh_exit(char **args)
+static int sh_exit(char **args)
 {
     (void)args;
     return 0;
 }
 
-int sh_execute(char **args)
+static int sh_execute(char **args)
 {
     if (args[0] == NULL)
     {
