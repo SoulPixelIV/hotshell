@@ -78,17 +78,15 @@ static char *sh_read_line(void)
     time (&rawtime);
     info = localtime(&rawtime);
 
-    while (1)
-    {
-        //Format time
-        strftime(buffer, 99, "%X", info);
-        //Get current Path
-        getcwd(buffer2, 99);
-        //Print time and path
-        printf("\033[37;1;5;41m%s\n\033[31;1;5;47mHOT %s", buffer, buffer2);
-        char *line = readline(" -> \033[0m");
-        return line;
-    }
+    //Format time
+    strftime(buffer, 99, "%X", info);
+    //Get current Path
+    getcwd(buffer2, 99);
+    printf("[ANIMATED FLAME GOES HERE]");
+    //Print time and path
+    printf("\033[37;1;5;41m%s\n\033[31;1;5;47mHOT %s", buffer, buffer2);
+    char *line = readline(" -> \033[0m");
+    return line;
 }
 
 //Split line in to multiple arguments
@@ -118,7 +116,7 @@ static char **sh_split_line(char *line)
 
 static int sh_launch(char **args)
 {
-    pid_t pid, wpid;
+    pid_t pid;
     int status;
 
     //Clone shell and start other program
@@ -139,7 +137,7 @@ static int sh_launch(char **args)
     {
         do
         {
-            wpid = waitpid(pid, &status, WUNTRACED);
+            waitpid(pid, &status, WUNTRACED);
         }
         while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
@@ -153,16 +151,14 @@ static int sh_num_builtins(void) {
 //Cd command
 static int sh_cd(char **args)
 {
-    if (args[1] == NULL)
+    char *dir = args[1];
+    if (dir == NULL)
     {
-        fprintf(stderr, "\033[37;1;5;41mSUPER ERROR\033[0m");
+        dir = getenv("HOME");
     }
-    else
+    if (chdir(dir) != 0)
     {
-        if (chdir(args[1]) != 0)
-        {
-            perror("\033[37;1;5;41mSUPER ERROR\033[0m");
-        }
+	perror("\033[37;1;5;41mSUPER ERROR\033[0m");
     }
     return 1;
 }
@@ -171,13 +167,12 @@ static int sh_cd(char **args)
 static int sh_help(char **args)
 {
     (void)args;
-    int i;
     printf("\033[37;1;5;41mSuper Hot Shell (shsh) v.0.5\n");
     printf("By William Djalal\n");
     printf("GitHub: SoulPixelIV\n");
     printf("The following commands are built in:\033[0m\n");
 
-    for (i = 0; i < sh_num_builtins(); i++)
+    for (int i = 0; i < sh_num_builtins(); i++)
     {
         printf("  %s\n", builtin_str[i]);
     }
