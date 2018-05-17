@@ -7,18 +7,17 @@
 #include <sys/wait.h>
 #include <time.h>
 
-static void sh_loop(void);
-static int sh_execute(char **args);
-static char *sh_read_line(void);
-static char **sh_split_line(char *line);
-static int sh_launch(char **args);
-static int sh_num_builtins(void);
+static void	  sh_loop(void);
+static int	  sh_execute(char **args);
+static char	 *sh_read_line(void);
+static char	**sh_split_line(char *line);
+static int	  sh_launch(char **args);
+static int	  sh_num_builtins(void);
 
 //Other supported commands
 static int sh_cd(char **args);
 static int sh_help(char **args);
 static int sh_exit(char **args);
-
 
 static char *builtin_str[] = {
   "cd",
@@ -156,13 +155,13 @@ static int sh_cd(char **args)
 {
     if (args[1] == NULL)
     {
-        fprintf(stderr, "\033[37;1;5;41m SUPER ERROR\033[0m");
+        fprintf(stderr, "\033[37;1;5;41mSUPER ERROR\033[0m");
     }
     else
     {
         if (chdir(args[1]) != 0)
         {
-            perror("\033[37;1;5;41m SUPER ERROR\033[0m");
+            perror("\033[37;1;5;41mSUPER ERROR\033[0m");
         }
     }
     return 1;
