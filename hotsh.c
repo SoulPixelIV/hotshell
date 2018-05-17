@@ -15,9 +15,9 @@ static int	  sh_launch(char **args);
 static int	  sh_num_builtins(void);
 
 //Other supported commands
-static int sh_cd(char **args);
-static int sh_help(char **args);
-static int sh_exit(char **args);
+static int	sh_cd(char **args);
+static int	sh_help(char **args);
+static int	sh_exit(char **args);
 
 static char *builtin_str[] = {
   "cd",
